@@ -1,4 +1,25 @@
-# COPYRIGHT_NOTICE
+# File:   autoencoder.py
+# Brief:  Neural network autoencoded radio link over AWGN channel 
+# Author: Vidit Saxena
+#
+# Usage:  import autoencoder
+#
+# -------------------------------------------------------------------------
+#
+# Copyright (C) 2016 CC0 1.0 Universal (CC0 1.0) 
+#
+# The person who associated a work with this deed has dedicated the work to
+# the public domain by waiving all of his or her rights to the work 
+# worldwide under copyright law, including all related and neighboring 
+# rights, to the extent allowed by law.
+#
+# You can copy, modify, distribute and perform the work, even for commercial 
+# purposes, all without asking permission.
+#
+# See the complete legal text at 
+# <https://creativecommons.org/publicdomain/zero/1.0/legalcode>
+#
+# -------------------------------------------------------------------------
 
 import tensorflow as tf
 import numpy as np
@@ -34,14 +55,6 @@ def block_error_ratio_autoencoder_awgn(snrs_db, block_size, channel_use, batch_s
     
     print '--Training the autoencoder over awgn channel--'
     _train(train_step, input, noise_std_dev, nrof_steps, train_dataset, snrs_db, rate, accuracy)
-    
-#     '''Evaluate the network for debugging'''
-#     eval_tensor = test_dataset[0:1, :]
-#     noise = 1
-#  
-#     print 'input', eval_tensor
-#     for i in range(1):
-#         print 'h_norm', h_norm.eval(feed_dict={input: eval_tensor, noise_std_dev: noise})
     
     print '--Evaluating autoencoder performance--'
     bler = _evaluate(input, noise_std_dev, test_dataset, snrs_db, rate, accuracy)

@@ -1,4 +1,29 @@
-# COPYRIGHT_NOTICE
+# File:   radio_autoencoder.py
+# Brief:  Simulates a radio link over AWGN channel for Uncoded, Hamming 
+#         coded and Neural network autoencoded radio links.
+#         Reproduces the results obtained in 
+#         "An Introduction to Deep Learning for the Physical Layer",
+#         Timothy J. O'Shea, Jakob Hoydis
+# Author: Vidit Saxena
+#
+# Usage:  python radio_autoencoder.py
+#
+# -------------------------------------------------------------------------
+#
+# Copyright (C) 2016 CC0 1.0 Universal (CC0 1.0) 
+#
+# The person who associated a work with this deed has dedicated the work to
+# the public domain by waiving all of his or her rights to the work 
+# worldwide under copyright law, including all related and neighboring 
+# rights, to the extent allowed by law.
+#
+# You can copy, modify, distribute and perform the work, even for commercial 
+# purposes, all without asking permission.
+#
+# See the complete legal text at 
+# <https://creativecommons.org/publicdomain/zero/1.0/legalcode>
+#
+# -------------------------------------------------------------------------
 
 from src import uncoded, hamming
 from src import autoencoder
