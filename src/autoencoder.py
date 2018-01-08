@@ -71,13 +71,13 @@ def _setup_interactive_tf_session():
     return tf.InteractiveSession()
 
 def _init_and_start_tf_session():
-    init = tf.initialize_all_variables()
+    init = tf.global_variables_initializer()
     sess = tf.Session()
     sess.run(init)
     return sess
 
 def _init_and_start_tf_session(sess):
-    sess.run(tf.initialize_all_variables())
+    sess.run(tf.global_variables_initializer())
     
 def _close_tf_session(sess):
     sess.close
@@ -129,7 +129,7 @@ def _implement_autoencoder(input_dimension, encoder_dimension):
     return (input, output, noise_std_dev, h_norm)
     
 def _implement_training(output, input):
-    cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits = output, labels = input))
+    cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits = output, labels = input))
     
 #     train_step = tf.train.GradientDescentOptimizer(1e-2).minimize(cross_entropy) 
     train_step = tf.train.AdamOptimizer(1e-3).minimize(cross_entropy)

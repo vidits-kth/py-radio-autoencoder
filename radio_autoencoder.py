@@ -30,6 +30,13 @@ from src import autoencoder
 
 from matplotlib import pyplot as plt
 
+''' Function:    _bler_vs_snr_hamming_autoenc(block_size, channel_use, snrs_db)
+    Description: Block error ratio (BLER) vs Signal to Noise Ratio (SNR) 
+                 curves for standard channel coding using Hamming codes, 
+                 and for 'learnt' optimal representation that are obtained 
+                 by training a neural network based autoencoder. Additive 
+                 White Gaussian Noise (AWGN) channel is assumed. 
+'''  
 def _bler_vs_snr_hamming_autoenc(block_size, channel_use, snrs_db):
     
     channel_use = {4: 7} # Mapping to get length of Hamming codeblock from block length 
@@ -47,7 +54,7 @@ def _bler_vs_snr_hamming_autoenc(block_size, channel_use, snrs_db):
     batch_size = 20/block_size
     nrof_steps = 200000/block_size
     bler_autoenc = autoencoder.block_error_ratio_autoencoder_awgn(snrs_db, block_size, channel_use[block_size], batch_size, nrof_steps)
-       
+    
     print '-------Plotting results-------'
     plt.figure()
     plt.grid(True)
@@ -62,6 +69,15 @@ def _bler_vs_snr_hamming_autoenc(block_size, channel_use, snrs_db):
                loc = 'lower left')
     plt.title('BLER vs SNR for Autoencoder and several baseline communication schemes')
     
+    return (bler_hamming, bler_autoenc)
+
+''' Function:    _bler_vs_snr_hamming_autoenc(block_size, channel_use, snrs_db)
+    Description: Block error ratio (BLER) vs Signal to Noise Ratio (SNR) curves 
+                 for uncoded transmission, and for 'learnt' optimal 
+                 representations of the transmitted bits that are obtained by 
+                 training a neural network based autoencoder. Additive White 
+                 Gaussian Noise (AWGN) channel is assumed. 
+'''  
 def _bler_vs_snr_uncoded_autoenc(block_sizes, snrs_db):
     
     plt.figure()
@@ -75,8 +91,8 @@ def _bler_vs_snr_uncoded_autoenc(block_sizes, snrs_db):
     
         '''BLER for Autoencoder coded  bits over AWGN channel'''
         print '-------Evaluating BLER for Autoencoder (%d,%d) over AWGN-------' %(block_size, block_size)
-        batch_size = 20/block_size
-        nrof_steps = 200000/block_size
+        batch_size = 10/block_size
+        nrof_steps = 100000/block_size
         bler_autoenc = autoencoder.block_error_ratio_autoencoder_awgn(snrs_db, block_size, block_size, batch_size, nrof_steps)
         
         print '-------Plotting results-------'
