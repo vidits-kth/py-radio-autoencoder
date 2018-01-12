@@ -23,12 +23,12 @@
 
 import numpy as np
 
-from py_itpp.base import bvec, cvec, ivec
-from py_itpp.base import random
+from py_itpp import bvec, cvec, ivec
+from py_itpp import random
 
-from py_itpp.comm.modulator import modulator_2d, soft_method
-from py_itpp.comm.error_counters import BLERC
-from py_itpp.comm.hammcode import hamming_code
+from py_itpp import modulator_2d, soft_method
+from py_itpp import BLERC
+from py_itpp import hamming_code
 
 def block_error_ratio_hamming_awgn(snr_db, block_size):
     
