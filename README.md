@@ -8,4 +8,4 @@ Simulates a radio link over AWGN channel for Uncoded, Hamming coded and Neural n
 Install Tensorflow: https://www.tensorflow.org/install/  
 Install py-itpp: https://github.com/vidits-kth/py-itpp  
 Clone the repo  
-Run > radio_autoencoder.py  
+Run > python radio_autoencoder.py  
