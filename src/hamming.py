@@ -21,14 +21,7 @@
 #
 # -------------------------------------------------------------------------
 
-import numpy as np
-
-from py_itpp import bvec, cvec, ivec
-from py_itpp import random
-
-from py_itpp import modulator_2d, soft_method
-from py_itpp import BLERC
-from py_itpp import hamming_code
+import itpp
 
 def block_error_ratio_hamming_awgn(snr_db, block_size):
     
@@ -36,28 +29,28 @@ def block_error_ratio_hamming_awgn(snr_db, block_size):
     m = mapping_k_m[block_size]
      
     '''Hamming encoder and decoder instance'''
-    hamm = hamming_code(m)
+    hamm = itpp.comm.hamming_code(m)
     n = pow(2,m) - 1 # channel use
     rate = float(block_size)/float(n)
     
     '''Generate random bits'''
     nrof_bits = 10000 * block_size
-    source_bits = random.randb(nrof_bits)
+    source_bits = itpp.randb(nrof_bits)
     
     '''Encode the bits'''
     encoded_bits = hamm.encode(source_bits)
     
     '''Modulate the bits'''
-    modulator_ = modulator_2d()
-    constellation = cvec('-1+0i, 1+0i')
-    symbols = ivec('0, 1')
+    modulator_ = itpp.comm.modulator_2d()
+    constellation = itpp.cvec('-1+0i, 1+0i')
+    symbols = itpp.ivec('0, 1')
     modulator_.set(constellation, symbols)
     tx_signal = modulator_.modulate_bits(encoded_bits)
     
     '''Add the effect of channel to the signal'''
     noise_variance = 1.0 / (rate * pow(10, 0.1 * snr_db))
-    noise = random.randn_c(tx_signal.length())
-    noise *= np.sqrt(noise_variance)
+    noise = itpp.randn_c(tx_signal.length())
+    noise *= itpp.math.sqrt(noise_variance)
     rx_signal = tx_signal + noise
     
     '''Demodulate the signal'''
@@ -67,6 +60,6 @@ def block_error_ratio_hamming_awgn(snr_db, block_size):
     decoded_bits = hamm.decode(demodulated_bits) 
     
     '''Calculate the block error ratio'''
-    blerc = BLERC(block_size)
+    blerc = itpp.comm.BLERC(block_size)
     blerc.count(source_bits, decoded_bits)
     return blerc.get_errorrate()

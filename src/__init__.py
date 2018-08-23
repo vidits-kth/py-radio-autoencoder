@@ -1,3 +1,3 @@
-import autoencoder
-import hamming
-import uncoded
+from . import autoencoder
+from . import hamming
+from . import uncoded

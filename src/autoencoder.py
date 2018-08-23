@@ -26,11 +26,11 @@ import numpy as np
 
 def block_error_ratio_autoencoder_awgn(snrs_db, block_size, channel_use, batch_size, nrof_steps):
     
-    print 'block_size', block_size
-    print 'channel_use', channel_use
+    print('block_size %d'%(block_size))
+    print('channel_use %d'%(channel_use))
     
     rate = float(block_size)/float(channel_use)
-    print 'rate', rate
+    print('rate %0.2f'%(rate))
     
     '''The input is one-hot encoded vector for each codeword'''
     alphabet_size = pow(2, block_size)
@@ -40,26 +40,26 @@ def block_error_ratio_autoencoder_awgn(snrs_db, block_size, channel_use, batch_s
     train_dataset = np.transpose(np.tile(alphabet, batch_size))
     test_dataset = np.transpose(np.tile(alphabet, batch_size * 1000))
     
-    print '--Setting up autoencoder graph--'
+    print('--Setting up autoencoder graph--')
     input, output, noise_std_dev, h_norm = _implement_autoencoder(alphabet_size, channel_use)
     
-    print '--Setting up training scheme--'
+    print( '--Setting up training scheme--')
     train_step = _implement_training(output, input)
     
-    print '--Setting up accuracy--'
+    print('--Setting up accuracy--')
     accuracy = _implement_accuracy(output, input)
 
-    print '--Starting the tensorflow session--'
+    print('--Starting the tensorflow session--')
     sess = _setup_interactive_tf_session()
     _init_and_start_tf_session(sess)
     
-    print '--Training the autoencoder over awgn channel--'
+    print('--Training the autoencoder over awgn channel--')
     _train(train_step, input, noise_std_dev, nrof_steps, train_dataset, snrs_db, rate, accuracy)
     
-    print '--Evaluating autoencoder performance--'
+    print('--Evaluating autoencoder performance--')
     bler = _evaluate(input, noise_std_dev, test_dataset, snrs_db, rate, accuracy)
     
-    print '--Closing the session--'
+    print('--Closing the session--')
     _close_tf_session(sess)
     
     return bler
@@ -142,23 +142,23 @@ def _implement_accuracy(output, input):
     return accuracy
 
 def _train(train_step, input, noise_std_dev, nrof_steps, training_dataset, snrs_db, rate, accuracy):
-    print '--Training--'
-    print 'number of steps', nrof_steps
+    print('--Training--')
+    print('number of steps %d'%(nrof_steps))
     snr = max(snrs_db)
     snrs_rev = snrs_db[::-1]
     for snr in snrs_rev[0:1]: # Train with higher SNRs first
-        print 'training snr', snr, 'db'
+        print('training snr %0.2f db'%(snr))
         noise = np.sqrt(1.0 / (2 * rate * pow(10, 0.1 * snr)))
         for i in range(nrof_steps):
             batch = training_dataset
             np.random.shuffle(batch)
             if (i + 1) % (nrof_steps/10) == 0: # i = 0 is the first step
-                print 'training step', (i + 1)
+                print('training step %d'%(i + 1))
             train_step.run(feed_dict={input: batch, noise_std_dev: noise})
-        print 'training accuracy', accuracy.eval(feed_dict={input: batch, noise_std_dev: noise})
+        print('training accuracy %0.4f'%(accuracy.eval(feed_dict={input: batch, noise_std_dev: noise})))
 
 def _evaluate(input, noise_std_dev, test_dataset, snrs_db, rate, accuracy):
-    print '--Evaluating NN performance on test dataset--'
+    print('--Evaluating NN performance on test dataset--')
     bler = []
     for snr in snrs_db:
         noise = np.sqrt(1.0 / (2 * rate * pow(10, 0.1 * snr)))

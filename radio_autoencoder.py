@@ -42,20 +42,20 @@ def _bler_vs_snr_hamming_autoenc(block_size, channel_use, snrs_db):
     channel_use = {4: 7} # Mapping to get length of Hamming codeblock from block length 
         
     '''BLER for uncoded BPSK over AWGN channel'''
-    print '-------Evaluating BLER for Uncoded (%d,%d) over AWGN-------' %(block_size, block_size)
+    print('-------Evaluating BLER for Uncoded (%d,%d) over AWGN-------'%(block_size, block_size))
     bler_unc = [uncoded.block_error_ratio_uncoded_awgn(snr, block_size) for snr in snrs_db]
      
     '''BLER for Hamming coded bits over AWGN channel'''
-    print '-------Evaluating BLER for Hamming (%d,%d) over AWGN-------' %(channel_use[block_size], block_size)
+    print('-------Evaluating BLER for Hamming (%d,%d) over AWGN-------' %(channel_use[block_size], block_size))
     bler_hamming = [hamming.block_error_ratio_hamming_awgn(snr, block_size) for snr in snrs_db]
     
     '''BLER for Autoencoder coded bits over AWGN channel'''
-    print '-------Evaluating BLER for Autoencoder (%d,%d) over AWGN-------' %(channel_use[block_size], block_size)
-    batch_size = 20/block_size
-    nrof_steps = 200000/block_size
+    print('-------Evaluating BLER for Autoencoder (%d,%d) over AWGN-------' %(channel_use[block_size], block_size))
+    batch_size = int(20/block_size)
+    nrof_steps = int(200000/block_size)
     bler_autoenc = autoencoder.block_error_ratio_autoencoder_awgn(snrs_db, block_size, channel_use[block_size], batch_size, nrof_steps)
     
-    print '-------Plotting results-------'
+    print('-------Plotting results-------')
     plt.figure()
     plt.grid(True)
     plt.semilogy(snrs_db, bler_unc, ls = '-', c = 'b')
@@ -86,16 +86,16 @@ def _bler_vs_snr_uncoded_autoenc(block_sizes, snrs_db):
     colors = iter(list(['b', 'r', 'g', 'b', 'm']))
     for block_size in block_sizes:
         '''BLER for uncoded bits over AWGN channel'''
-        print '-------Evaluating BLER for Uncoded BPSK (%d,%d) over AWGN-------' %(block_size, block_size)
+        print('-------Evaluating BLER for Uncoded BPSK (%d,%d) over AWGN-------' %(block_size, block_size))
         bler_unc = [uncoded.block_error_ratio_uncoded_awgn(snr, block_size) for snr in snrs_db]
     
         '''BLER for Autoencoder coded  bits over AWGN channel'''
-        print '-------Evaluating BLER for Autoencoder (%d,%d) over AWGN-------' %(block_size, block_size)
+        print('-------Evaluating BLER for Autoencoder (%d,%d) over AWGN-------' %(block_size, block_size))
         batch_size = 10/block_size
         nrof_steps = 100000/block_size
         bler_autoenc = autoencoder.block_error_ratio_autoencoder_awgn(snrs_db, block_size, block_size, batch_size, nrof_steps)
         
-        print '-------Plotting results-------'
+        print('-------Plotting results-------')
         color = next(colors) 
         plt.semilogy(snrs_db, bler_unc, ls = '-', c = color)
         plt.semilogy(snrs_db, bler_autoenc, ls = '--', c = color, marker = 'o')
