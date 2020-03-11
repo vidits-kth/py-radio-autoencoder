@@ -29,7 +29,7 @@ def block_error_ratio_hamming_awgn(snr_db, block_size):
     m = mapping_k_m[block_size]
      
     '''Hamming encoder and decoder instance'''
-    hamm = itpp.comm.hamming_code(m)
+    hamm = itpp.comm.Hamming_Code(m)
     n = pow(2,m) - 1 # channel use
     rate = float(block_size)/float(n)
     

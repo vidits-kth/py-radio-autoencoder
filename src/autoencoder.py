@@ -37,8 +37,8 @@ def block_error_ratio_autoencoder_awgn(snrs_db, block_size, channel_use, batch_s
     alphabet = np.eye(alphabet_size, dtype = 'float32') # One-hot encoded values
     
     '''Repeat the alphabet to create training and test datasets'''
-    train_dataset = np.transpose(np.tile(alphabet, batch_size))
-    test_dataset = np.transpose(np.tile(alphabet, batch_size * 1000))
+    train_dataset = np.transpose(np.tile(alphabet, int(batch_size)))
+    test_dataset = np.transpose(np.tile(alphabet, int(batch_size * 1000)))
     
     print('--Setting up autoencoder graph--')
     input, output, noise_std_dev, h_norm = _implement_autoencoder(alphabet_size, channel_use)
@@ -68,22 +68,22 @@ def _setup_tf_session():
     return tf.Session()
 
 def _setup_interactive_tf_session():
-    return tf.InteractiveSession()
+    return tf.compat.v1.InteractiveSession()
 
 def _init_and_start_tf_session():
-    init = tf.global_variables_initializer()
+    init = tf.compat.v1.global_variables_initializer()
     sess = tf.Session()
     sess.run(init)
     return sess
 
 def _init_and_start_tf_session(sess):
-    sess.run(tf.global_variables_initializer())
+    sess.run(tf.compat.v1.global_variables_initializer())
     
 def _close_tf_session(sess):
     sess.close
     
 def _weight_variable(shape):
-    initial = tf.truncated_normal(shape, stddev=0.01)
+    initial = tf.random.truncated_normal(shape, stddev=0.01)
     return tf.Variable(initial)
 
 def _bias_variable(shape):
@@ -91,7 +91,7 @@ def _bias_variable(shape):
     return tf.Variable(initial)
 
 def _implement_autoencoder(input_dimension, encoder_dimension):
-    input = tf.placeholder(tf.float32, [None, input_dimension])
+    input = tf.compat.v1.placeholder(tf.float32, [None, input_dimension])
     
     '''Densely connected encoder layer'''
     W_enc1 = _weight_variable([input_dimension, input_dimension])
@@ -106,12 +106,12 @@ def _implement_autoencoder(input_dimension, encoder_dimension):
     h_enc2 = tf.matmul(h_enc1, W_enc2) + b_enc2
     
     '''Normalization layer'''
-    normalization_factor = tf.reciprocal(tf.sqrt(tf.reduce_sum(tf.square(h_enc2), 1))) * np.sqrt(encoder_dimension)
+    normalization_factor = tf.math.reciprocal(tf.sqrt(tf.reduce_sum(tf.square(h_enc2), 1))) * np.sqrt(encoder_dimension)
     h_norm = tf.multiply(tf.tile(tf.expand_dims(normalization_factor, 1), [1, encoder_dimension]), h_enc2)
 
     '''AWGN noise layer'''
-    noise_std_dev = tf.placeholder(tf.float32)
-    channel = tf.random_normal(tf.shape(h_norm), stddev=noise_std_dev)
+    noise_std_dev = tf.compat.v1.placeholder(tf.float32)
+    channel = tf.random.normal(tf.shape(h_norm), stddev=noise_std_dev)
     h_noisy = tf.add(h_norm, channel)
     
     '''Densely connected decoder layer'''
@@ -132,7 +132,7 @@ def _implement_training(output, input):
     cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits = output, labels = input))
     
 #     train_step = tf.train.GradientDescentOptimizer(1e-2).minimize(cross_entropy) 
-    train_step = tf.train.AdamOptimizer(1e-3).minimize(cross_entropy)
+    train_step = tf.compat.v1.train.AdamOptimizer(1e-3).minimize(cross_entropy)
     
     return train_step
 
@@ -149,7 +149,7 @@ def _train(train_step, input, noise_std_dev, nrof_steps, training_dataset, snrs_
     for snr in snrs_rev[0:1]: # Train with higher SNRs first
         print('training snr %0.2f db'%(snr))
         noise = np.sqrt(1.0 / (2 * rate * pow(10, 0.1 * snr)))
-        for i in range(nrof_steps):
+        for i in range(int(nrof_steps)):
             batch = training_dataset
             np.random.shuffle(batch)
             if (i + 1) % (nrof_steps/10) == 0: # i = 0 is the first step
